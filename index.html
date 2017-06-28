@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>OAuth example</title>
+    <script src="node_modules/life-engine-js/dist/LifeEngine.js"></script>
+    <script src="config.js"></script>
+    <style>
+        #s {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+<div id="s">Starting</div>
+<script>
+    var statusContainer = document.getElementById("s");
+    var clientId = config.oauth.client_id;
+    var apiUrl = config.apiUrl;
+    var backendUrl = window.location.protocol + "//" + window.location.host;
+    var oauthStartUrl = backendUrl + "/connect/life_engine";
+    var urlData = getUrlData();
+
+    var LE = new LifeEngine({
+        "apiUrl": apiUrl,
+        "clientId": clientId
+    });
+
+    function setStatus(text) {
+        console.log(text);
+        statusContainer.innerHTML = text;
+    }
+
+    function getUrlData() {
+        var hash = String(window.location.hash);
+        if (hash.length > 0) {
+            var data = JSON.parse(decodeURIComponent(hash.substr(1)));
+            window.location.hash = "";
+            return data;
+        }
+
+        return {};
+    }
+
+    function getAccessToken() {
+        // Storage and refreshing best handled on the server in reality
+        var token = window.localStorage.getItem("access_token");
+        if (token === null) {
+            token = urlData.accessToken;
+        }
+
+        window.localStorage.setItem("access_token", token);
+
+        return token;
+    }
+
+    function run() {
+        var accessToken = getAccessToken();
+        if (accessToken === undefined) {
+            // Start OAuth Authorization Grant -flow
+            var link = '<a href="' + oauthStartUrl + '">' + oauthStartUrl + '</a>';
+            setStatus("No authorization. Please Log In at " + link);
+            return;
+        }
+
+        setStatus("Got authorization token. Fetching entities");
+
+        LE.setAuthToken(accessToken);
+
+        LE.entities.get({include: "keyValueData"}).then(function (result) {
+            var entities = result.data.data;
+            setStatus("Fetched entities: " + JSON.stringify(entities, null, 2));
+        });
+    }
+
+    run();
+</script>
+</body>
+</html>

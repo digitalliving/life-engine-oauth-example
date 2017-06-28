@@ -1,0 +1,16 @@
+{
+  "name": "life-engine-oauth-example",
+  "version": "1.0.0",
+  "repository": "https://github.com/digitalliving/life-engine-oauth-example",
+  "private": true,
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.15.3",
+    "express-session": "^1.15.3",
+    "grant-express": "^3.8.0",
+    "life-engine-js": "^0.8.0",
+    "nodemon": "^1.11.0"
+  }
+}
