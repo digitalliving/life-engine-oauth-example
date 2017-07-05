@@ -44,12 +44,13 @@
 
     function getAccessToken() {
         // Storage and refreshing best handled on the server in reality
-        var token = window.localStorage.getItem("access_token");
-        if (token === null) {
-            token = urlData.accessToken;
+        var token = urlData.accessToken;
+        if (token === undefined) {
+            token = window.localStorage.getItem("access_token");
         }
 
         window.localStorage.setItem("access_token", token);
+        console.log("Token", token);
 
         return token;
     }
